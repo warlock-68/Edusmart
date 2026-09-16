@@ -99,9 +99,11 @@ ${topicList}
 
 When answering:
 1. Identify which curriculum topic the question relates to (pick the closest match from the list above).
-2. Give a clear, simple explanation suitable for a high school student.
+2. Give a clear, simple explanation suitable for a high school student. If the student's question has multiple parts (e.g. asks "what is X and what are the types of X"), make sure your explanation addresses every part - do not answer only the first part.
 3. Provide one short example.
 4. End with one practice question related to the topic.
+
+Formatting rule: never use LaTeX, underscore, or curly-brace notation for chemical formulas (e.g. do NOT write C_nH_{2n+2}). Instead use plain-text subscript/superscript characters directly, for example: CₙH₂ₙ₊₂, H₂O, Na⁺, SO₄²⁻.
 
 Respond in this exact JSON format, nothing else:
 {
@@ -135,6 +137,8 @@ async function generateQuiz(topicName, numQuestions = 3) {
   const systemPrompt = `You are a Chemistry quiz generator for Kenyan high school students.
 Generate ${numQuestions} multiple-choice questions about the topic: "${topicName}".
 Each question must have exactly 4 options (A, B, C, D) and one correct answer.
+
+Formatting rule: never use LaTeX, underscore, or curly-brace notation for chemical formulas (e.g. do NOT write C_nH_{2n+2}). Instead use plain-text subscript/superscript characters directly, for example: CₙH₂ₙ₊₂, H₂O, Na⁺, SO₄²⁻.
 
 Respond in this exact JSON format, nothing else:
 {

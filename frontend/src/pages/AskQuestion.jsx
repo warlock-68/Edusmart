@@ -37,51 +37,53 @@ function AskQuestion() {
 
   const matchedCurriculumTopic = Boolean(answer && answer.topic_id);
 
-  return (
-    <div style={{ maxWidth: 600, margin: '50px auto', fontFamily: 'sans-serif' }}>
-      <h2>Ask a Chemistry Question</h2>
-      <form onSubmit={handleSubmit}>
-        <textarea
-          placeholder="e.g. What is an alkane?"
-          value={question}
-          onChange={(e) => setQuestion(e.target.value)}
-          required
-          rows={3}
-          style={{ display: 'block', width: '100%', marginBottom: 10, padding: 8, fontSize: 16 }}
-        />
-        <button type="submit" disabled={loading} style={{ width: '100%', padding: 10 }}>
-          {loading ? 'Thinking...' : 'Ask'}
-        </button>
-      </form>
+    return (
+    <div className="page-shell--wide">
+      <div className="panel">
+        <h2 className="text-2xl mb-6">Ask a Chemistry Question</h2>
+        <form onSubmit={handleSubmit}>
+          <textarea
+            placeholder="e.g. What is an alkane?"
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            required
+            rows={3}
+            className="field-input"
+          />
+          <button type="submit" disabled={loading} className="btn-primary">
+            {loading ? 'Thinking...' : 'Ask'}
+          </button>
+        </form>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <p className="badge-error mt-4">{error}</p>}
 
-      {answer && (
-        <div style={{ marginTop: 30, border: '1px solid #ccc', borderRadius: 8, padding: 20 }}>
-          {!matchedCurriculumTopic && (
-            <p style={{ fontStyle: 'italic', color: '#666' }}>
-              This question doesn't match a specific curriculum topic, so no revision quiz is available for it.
-            </p>
-          )}
-          {matchedCurriculumTopic && (
-            <>
-              <p><strong>Grade:</strong> {answer.grade}</p>
-              <p><strong>Topic:</strong> {answer.matched_topic}</p>
-            </>
-          )}
-          <p><strong>Explanation:</strong> {answer.explanation}</p>
-          <p><strong>Example:</strong> {answer.example}</p>
-          <p><strong>Practice Question:</strong> {answer.practice_question}</p>
-          {matchedCurriculumTopic && (
-            <button
-              onClick={() => navigate(`/quiz?topic_id=${answer.topic_id}`)}
-              style={{ marginTop: 15, padding: 10, width: '100%' }}
-            >
-              Would you like to attempt some revision questions on this topic?
-            </button>
-          )}
-        </div>
-      )}
+        {answer && (
+          <div className="mt-8 border border-[var(--color-line)] rounded-sm p-6">
+            {!matchedCurriculumTopic && (
+              <p className="italic text-[var(--color-ink)]/60 mb-4">
+                This question doesn't match a specific curriculum topic, so no revision quiz is available for it.
+              </p>
+            )}
+            {matchedCurriculumTopic && (
+              <>
+                <p className="mb-2"><span className="field-label inline">Grade:</span> {answer.grade}</p>
+                <p className="mb-4"><span className="field-label inline">Topic:</span> {answer.matched_topic}</p>
+              </>
+            )}
+            <p className="mb-4"><span className="field-label inline">Explanation:</span> {answer.explanation}</p>
+            <p className="mb-4"><span className="field-label inline">Example:</span> {answer.example}</p>
+            <p className="mb-4"><span className="field-label inline">Practice Question:</span> {answer.practice_question}</p>
+            {matchedCurriculumTopic && (
+              <button
+                onClick={() => navigate(`/quiz?topic_id=${answer.topic_id}`)}
+                className="btn-secondary mt-2 w-full"
+              >
+                Would you like to attempt some revision questions on this topic?
+              </button>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -82,93 +82,97 @@ function Quiz() {
     // the user can clear/change it if they want a different one.
   };
 
-  return (
-    <div style={{ maxWidth: 600, margin: '50px auto', fontFamily: 'sans-serif' }}>
-      <h2>Chemistry Quiz</h2>
+    return (
+    <div className="page-shell--wide">
+      <div className="panel">
+        <h2 className="text-2xl mb-6">Chemistry Quiz</h2>
 
-      {!quiz && (
-        <form onSubmit={handleGenerate}>
-          <input
-            type="number"
-            placeholder="Topic ID (e.g. 1)"
-            value={topicId}
-            onChange={(e) => setTopicId(e.target.value)}
-            required
-            style={{ display: 'block', width: '100%', marginBottom: 10, padding: 8 }}
-          />
-          <button type="submit" disabled={loading} style={{ width: '100%', padding: 10 }}>
-            {loading ? 'Generating...' : 'Generate Quiz'}
-          </button>
-        </form>
-      )}
+        {!quiz && (
+          <form onSubmit={handleGenerate}>
+            <label className="field-label">Topic ID</label>
+            <input
+              type="number"
+              placeholder="e.g. 1"
+              value={topicId}
+              onChange={(e) => setTopicId(e.target.value)}
+              required
+              className="field-input"
+            />
+            <button type="submit" disabled={loading} className="btn-primary">
+              {loading ? 'Generating...' : 'Generate Quiz'}
+            </button>
+          </form>
+        )}
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <p className="badge-error mt-4">{error}</p>}
 
-      {quiz && !result && (
-        <div>
-          <h3>{quiz.title}</h3>
+        {quiz && !result && (
+          <div className="mt-6">
+            <h3 className="text-lg mb-4">{quiz.title}</h3>
 
-          {quiz.questions.length === 0 ? (
-            <p>This quiz has no questions. Please try generating it again.</p>
-          ) : (
-            <>
-              {quiz.questions.map((q, idx) => (
-                <div key={q.id} style={{ marginBottom: 20, border: '1px solid #ccc', borderRadius: 8, padding: 15 }}>
-                  <p><strong>{idx + 1}. {q.question_text}</strong></p>
-                  {['a', 'b', 'c', 'd'].map((letter) => (
-                    <label key={letter} style={{ display: 'block', marginBottom: 5 }}>
-                      <input
-                        type="radio"
-                        name={`q-${q.id}`}
-                        value={letter.toUpperCase()}
-                        checked={answers[q.id] === letter.toUpperCase()}
-                        onChange={() => handleAnswerChange(q.id, letter.toUpperCase())}
-                      />
-                      {' '}{q[`option_${letter}`]}
-                    </label>
-                  ))}
-                </div>
-              ))}
-              <button onClick={handleSubmit} disabled={submitting} style={{ width: '100%', padding: 10 }}>
-                {submitting ? 'Submitting...' : 'Submit Quiz'}
-              </button>
-            </>
-          )}
-        </div>
-      )}
-
-      {result && (
-        <div style={{ marginTop: 20 }}>
-          <div style={{ padding: 20, border: '2px solid green', borderRadius: 8, marginBottom: 20 }}>
-            <h3>Score: {result.score} / {result.total}</h3>
+            {quiz.questions.length === 0 ? (
+              <p>This quiz has no questions. Please try generating it again.</p>
+            ) : (
+              <>
+                {quiz.questions.map((q, idx) => (
+                  <div key={q.id} className="mb-5 border border-[var(--color-line)] rounded-sm p-4">
+                    <p className="font-medium mb-2">{idx + 1}. {q.question_text}</p>
+                    {['a', 'b', 'c', 'd'].map((letter) => (
+                      <label key={letter} className="flex items-center gap-2 mb-1.5">
+                        <input
+                          type="radio"
+                          name={`q-${q.id}`}
+                          value={letter.toUpperCase()}
+                          checked={answers[q.id] === letter.toUpperCase()}
+                          onChange={() => handleAnswerChange(q.id, letter.toUpperCase())}
+                          className="accent-[var(--color-bunsen)]"
+                        />
+                        {q[`option_${letter}`]}
+                      </label>
+                    ))}
+                  </div>
+                ))}
+                <button onClick={handleSubmit} disabled={submitting} className="btn-primary w-full">
+                  {submitting ? 'Submitting...' : 'Submit Quiz'}
+                </button>
+              </>
+            )}
           </div>
-          <h3>Review Answers</h3>
-          {result.review.map((q, idx) => (
-            <div
-              key={q.id}
-              style={{
-                marginBottom: 15,
-                border: '1px solid #ccc',
-                borderRadius: 8,
-                padding: 15,
-                backgroundColor: q.is_correct ? '#e6ffe6' : '#ffe6e6'
-              }}
-            >
-              <p><strong>{idx + 1}. {q.question_text}</strong></p>
-              <p>
-                Your answer: {q.student_answer ? `${q.student_answer} — ${q[`option_${q.student_answer.toLowerCase()}`]}` : 'No answer'}{' '}
-                {q.is_correct ? '✅' : '❌'}
-              </p>
-              {!q.is_correct && (
-                <p>Correct answer: {q.correct_option} — {q[`option_${q.correct_option.toLowerCase()}`]}</p>
-              )}
+        )}
+
+        {result && (
+          <div className="mt-6">
+            <div className="p-5 border-t-4 border-[var(--color-copper)] bg-white mb-6">
+              <h3 className="text-lg">Score: {result.score} / {result.total}</h3>
             </div>
-          ))}
-          <button onClick={handleTakeAnother} style={{ width: '100%', padding: 10, marginTop: 10 }}>
-            Take Another Quiz
-          </button>
-        </div>
-      )}
+            <h3 className="text-lg mb-4">Review Answers</h3>
+            {result.review.map((q, idx) => (
+              <div
+                key={q.id}
+                className={`mb-4 border rounded-sm p-4 ${
+                  q.is_correct
+                    ? 'border-[var(--color-copper)]/40 bg-[var(--color-copper)]/5'
+                    : 'border-[var(--color-cinnabar)]/40 bg-[var(--color-cinnabar)]/5'
+                }`}
+              >
+                <p className="font-medium mb-2">{idx + 1}. {q.question_text}</p>
+                <p className="mb-1">
+                  Your answer: {q.student_answer ? `${q.student_answer} — ${q[`option_${q.student_answer.toLowerCase()}`]}` : 'No answer'}{' '}
+                  <span className={q.is_correct ? 'badge-success' : 'badge-error'}>
+                    {q.is_correct ? '✅' : '❌'}
+                  </span>
+                </p>
+                {!q.is_correct && (
+                  <p>Correct answer: {q.correct_option} — {q[`option_${q.correct_option.toLowerCase()}`]}</p>
+                )}
+              </div>
+            ))}
+            <button onClick={handleTakeAnother} className="btn-secondary w-full mt-2">
+              Take Another Quiz
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

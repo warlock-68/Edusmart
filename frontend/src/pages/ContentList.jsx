@@ -16,23 +16,28 @@ function ContentList() {
       .finally(() => setLoading(false));
   }, []);
 
-  return (
-    <div style={{ maxWidth: 600, margin: '50px auto', fontFamily: 'sans-serif' }}>
-      <h2>Chemistry Materials</h2>
-      {error && <p>{error}</p>}
-      {loading ? (
-        <p>Loading materials...</p>
-      ) : content.length === 0 && !error ? (
-        <p>No materials uploaded yet.</p>
-      ) : (
-        <ul>
-          {content.map((item) => (
-            <li key={item.id} style={{ marginBottom: 10 }}>
-              <strong>{item.title}</strong> — {item.grade}, {item.topic} (by {item.uploaded_by})
-            </li>
-          ))}
-        </ul>
-      )}
+   return (
+    <div className="page-shell--wide">
+      <div className="panel">
+        <h2 className="text-2xl mb-6">Chemistry Materials</h2>
+        {error && <p className="badge-error mb-4">{error}</p>}
+        {loading ? (
+          <p>Loading materials...</p>
+        ) : content.length === 0 && !error ? (
+          <p>No materials uploaded yet.</p>
+        ) : (
+          <div>
+            {content.map((item) => (
+              <div key={item.id} className="py-3 border-b border-[var(--color-line)]">
+                <span className="font-medium">{item.title}</span>
+                <span className="text-[var(--color-ink)]/60">
+                  {' '}— {item.grade}, {item.topic} (by {item.uploaded_by})
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

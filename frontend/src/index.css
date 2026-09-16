@@ -1,111 +1,84 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+@theme {
+  --color-chalk: #F4F6F2;
+  --color-ink: #1C2321;
+  --color-bunsen: #1B6FA8;
+  --color-bunsen-dark: #145A87;
+  --color-amber: #D98E2B;
+  --color-copper: #3F8F5F;
+  --color-cinnabar: #C1442D;
+  --color-line: #D8DDD8;
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+  --font-serif: "Fraunces", serif;
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
 }
 
 body {
   margin: 0;
+  background: var(--color-chalk);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+h1, h2, h3 {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+@layer components {
+  .navbar {
+    @apply flex items-center gap-6 px-8 py-4 border-b border-[var(--color-line)] bg-white;
   }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
+  .navbar a {
+    @apply text-[15px] text-[var(--color-ink)]/70 hover:text-[var(--color-bunsen)] transition-colors no-underline;
   }
-}
-p {
-  margin: 0;
-}
+  .navbar a.active {
+    @apply text-[var(--color-bunsen)] font-medium;
+  }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
+  .page-shell {
+    @apply max-w-xl mx-auto px-6 py-16;
+  }
+  .page-shell--wide {
+    @apply max-w-4xl mx-auto px-6 py-16;
+  }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+  .panel {
+    @apply bg-white border-t-4 border-[var(--color-bunsen)] rounded-sm p-8;
+  }
+
+  .field-label {
+    @apply block text-sm font-medium text-[var(--color-ink)]/70 mb-1.5;
+  }
+  .field-input {
+    @apply w-full px-3.5 py-2.5 mb-4 rounded-sm border border-[var(--color-line)] bg-white
+           text-[var(--color-ink)] placeholder:text-[var(--color-ink)]/40
+           focus:outline-none focus:border-[var(--color-bunsen)] focus:ring-2 focus:ring-[var(--color-bunsen)]/15;
+  }
+
+  .btn-primary {
+    @apply px-5 py-2.5 rounded-sm bg-[var(--color-bunsen)] text-white font-medium
+           hover:bg-[var(--color-bunsen-dark)] disabled:bg-[var(--color-ink)]/25
+           disabled:cursor-not-allowed transition-colors;
+  }
+  .btn-secondary {
+    @apply px-5 py-2.5 rounded-sm border border-[var(--color-line)] text-[var(--color-ink)]
+           hover:border-[var(--color-bunsen)] hover:text-[var(--color-bunsen)] transition-colors bg-white;
+  }
+
+  .badge-success { @apply text-[var(--color-copper)] font-medium; }
+  .badge-error { @apply text-[var(--color-cinnabar)] font-medium; }
+
+  .data-table {
+    @apply w-full border-collapse text-sm;
+  }
+  .data-table th {
+    @apply text-left font-medium text-[var(--color-ink)]/60 border-b border-[var(--color-line)] py-2 px-3;
+  }
+  .data-table td {
+    @apply border-b border-[var(--color-line)] py-2 px-3;
+  }
 }

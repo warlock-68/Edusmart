@@ -87,53 +87,62 @@ function Upload() {
   const noTopicsAvailable = !loadingTopics && topics.length === 0;
 
   return (
-    <div style={{ maxWidth: 400, margin: '50px auto', fontFamily: 'sans-serif' }}>
-      <h2>Upload Chemistry Material</h2>
+    <div className="page-shell">
+      <div className="panel">
+        <h2 className="text-2xl mb-6">Upload Chemistry Material</h2>
 
-      {loadingTopics ? (
-        <p>Loading topics...</p>
-      ) : noTopicsAvailable ? (
-        <p>No curriculum topics are set up yet. Please contact an administrator before uploading.</p>
-      ) : (
-        <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            placeholder="Title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            required
-            style={{ display: 'block', width: '100%', marginBottom: 10, padding: 8 }}
-          />
-          <select
-            value={topicId}
-            onChange={(e) => setTopicId(e.target.value)}
-            required
-            style={{ display: 'block', width: '100%', marginBottom: 10, padding: 8 }}
-          >
-            <option value="">-- Select Topic --</option>
-            {topics.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.grade} - {t.topic}
-              </option>
-            ))}
-          </select>
-          <input
-            key={fileInputKey}
-            type="file"
-            accept="application/pdf"
-            onChange={handleFileChange}
-            required
-            style={{ display: 'block', width: '100%', marginBottom: 10 }}
-          />
-          <button type="submit" disabled={submitting} style={{ width: '100%', padding: 10 }}>
-            {submitting ? 'Uploading...' : 'Upload'}
-          </button>
-        </form>
-      )}
+        {loadingTopics ? (
+          <p>Loading topics...</p>
+        ) : noTopicsAvailable ? (
+          <p>No curriculum topics are set up yet. Please contact an administrator before uploading.</p>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <label className="field-label">Title</label>
+            <input
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              className="field-input"
+            />
 
-      {message && (
-        <p style={{ color: messageType === 'error' ? 'red' : 'green' }}>{message}</p>
-      )}
+            <label className="field-label">Topic</label>
+            <select
+              value={topicId}
+              onChange={(e) => setTopicId(e.target.value)}
+              required
+              className="field-input"
+            >
+              <option value="">-- Select Topic --</option>
+              {topics.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.grade} - {t.topic}
+                </option>
+              ))}
+            </select>
+
+            <label className="field-label">PDF File</label>
+            <input
+              key={fileInputKey}
+              type="file"
+              accept="application/pdf"
+              onChange={handleFileChange}
+              required
+              className="field-input"
+            />
+
+            <button type="submit" disabled={submitting} className="btn-primary">
+              {submitting ? 'Uploading...' : 'Upload'}
+            </button>
+          </form>
+        )}
+
+        {message && (
+          <p className={`mt-4 ${messageType === 'error' ? 'badge-error' : 'badge-success'}`}>
+            {message}
+          </p>
+        )}
+      </div>
     </div>
   );
 }

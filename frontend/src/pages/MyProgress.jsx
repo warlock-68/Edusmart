@@ -36,43 +36,43 @@ function MyProgress() {
   };
 
   return (
-    <div style={{ maxWidth: 700, margin: '50px auto', fontFamily: 'sans-serif' }}>
-      <h2>My Progress</h2>
+    <div className="page-shell--wide">
+      <div className="panel">
+        <h2 className="text-2xl mb-6">My Progress</h2>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+        {error && <p className="badge-error mb-4">{error}</p>}
 
-      <h3>Topics to Revisit</h3>
-      {loadingWeakAreas ? (
-        <p>Loading your progress...</p>
-      ) : weakAreas.length === 0 ? (
-        <p>No weak areas detected yet — keep taking quizzes to see your progress here.</p>
-      ) : (
-        weakAreas.map((area) => (
-          <div key={area.topic_id} style={{ border: '1px solid #ccc', borderRadius: 8, padding: 15, marginBottom: 15 }}>
-            <p><strong>{area.grade}: {area.topic}</strong></p>
-            <p>Average Score: {area.avg_percentage}%</p>
-            <button onClick={() => handleGetHelp(area.topic_id)} style={{ padding: 8 }}>
-              Get Help With This Topic
-            </button>
-          </div>
-        ))
-      )}
+        <h3 className="text-lg mb-3">Topics to Revisit</h3>
+        {loadingWeakAreas ? (
+          <p>Loading your progress...</p>
+        ) : weakAreas.length === 0 ? (
+          <p>No weak areas detected yet — keep taking quizzes to see your progress here.</p>
+        ) : (
+          weakAreas.map((area) => (
+            <div key={area.topic_id} className="border border-[var(--color-line)] rounded-sm p-4 mb-4">
+              <p className="font-medium mb-1">{area.grade}: {area.topic}</p>
+              <p className="text-[var(--color-ink)]/70 mb-3">Average Score: {area.avg_percentage}%</p>
+              <button onClick={() => handleGetHelp(area.topic_id)} className="btn-secondary">
+                Get Help With This Topic
+              </button>
+            </div>
+          ))
+        )}
 
-      {loadingCatchup && <p>Loading resources...</p>}
+        {loadingCatchup && <p className="mt-4">Loading resources...</p>}
 
-      {catchup && (
-        <div style={{ marginTop: 30, border: '2px solid #4a90e2', borderRadius: 8, padding: 20 }}>
-          <h3>Catch-up Notes: {catchup.topic} ({catchup.grade})</h3>
-          <p><strong>Explanation:</strong> {catchup.notes.explanation}</p>
-          <p><strong>Example:</strong> {catchup.notes.example}</p>
-          <p><strong>Practice Question:</strong> {catchup.notes.practice_question}</p>
-          <p>
-            <a href={catchup.videoSearchUrl} target="_blank" rel="noopener noreferrer">
+        {catchup && (
+          <div className="mt-8 border-t-4 border-[var(--color-amber)] bg-white p-6">
+            <h3 className="text-lg mb-4">Catch-up Notes: {catchup.topic} ({catchup.grade})</h3>
+            <p className="mb-3"><span className="field-label inline">Explanation:</span> {catchup.notes.explanation}</p>
+            <p className="mb-3"><span className="field-label inline">Example:</span> {catchup.notes.example}</p>
+            <p className="mb-4"><span className="field-label inline">Practice Question:</span> {catchup.notes.practice_question}</p>
+            <a href={catchup.videoSearchUrl} target="_blank" rel="noopener noreferrer" className="text-[var(--color-bunsen)] font-medium hover:underline">
               Watch videos on this topic on YouTube →
             </a>
-          </p>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

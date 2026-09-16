@@ -22,15 +22,35 @@ function Login() {
     }
   };
 
-  return (
-    <div style={{ maxWidth: 400, margin: '50px auto', fontFamily: 'sans-serif' }}>
-      <h2>Log in to EduSmart</h2>
-      <form onSubmit={handleSubmit}>
-        <input name="email" type="email" placeholder="Email" value={form.email} onChange={handleChange} required style={{ display: 'block', width: '100%', marginBottom: 10, padding: 8 }} />
-        <input name="password" type="password" placeholder="Password" value={form.password} onChange={handleChange} required style={{ display: 'block', width: '100%', marginBottom: 10, padding: 8 }} />
-        <button type="submit" style={{ width: '100%', padding: 10 }}>Log In</button>
-      </form>
-      {message && <p>{message}</p>}
+      return (
+    <div className="page-shell">
+      <div className="panel">
+        <h2 className="text-2xl mb-6">Log in to EduSmart</h2>
+        <form onSubmit={handleSubmit}>
+          <label className="field-label">Email</label>
+          <input
+            name="email"
+            type="email"
+            value={form.email}
+            onChange={handleChange}
+            required
+            className="field-input"
+          />
+
+          <label className="field-label">Password</label>
+          <input
+            name="password"
+            type="password"
+            value={form.password}
+            onChange={handleChange}
+            required
+            className="field-input"
+          />
+
+          <button type="submit" className="btn-primary">Log In</button>
+        </form>
+        {message && <p className="mt-4">{message}</p>}
+      </div>
     </div>
   );
 }
