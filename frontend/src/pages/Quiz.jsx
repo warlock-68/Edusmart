@@ -4,6 +4,7 @@ import api from '../api';
 
 function Quiz() {
   const [topicId, setTopicId] = useState('');
+  const [topics, setTopics] = useState([]);
   const [quiz, setQuiz] = useState(null);
   const [answers, setAnswers] = useState({});
   const [result, setResult] = useState(null);
@@ -11,6 +12,13 @@ function Quiz() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    api.get('/content/topics', { headers: { Authorization: `Bearer ${token}` } })
+      .then(res => setTopics(res.data))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     const prefilledTopic = searchParams.get('topic_id');
@@ -89,15 +97,18 @@ function Quiz() {
 
         {!quiz && (
           <form onSubmit={handleGenerate}>
-            <label className="field-label">Topic ID</label>
-            <input
-              type="number"
-              placeholder="e.g. 1"
+            <label className="field-label">Topic</label>
+            <select
               value={topicId}
               onChange={(e) => setTopicId(e.target.value)}
               required
               className="field-input"
-            />
+            >
+              <option value="">-- Select a topic --</option>
+              {topics.map((t) => (
+                <option key={t.id} value={t.id}>{t.grade}: {t.topic}</option>
+              ))}
+            </select>
             <button type="submit" disabled={loading} className="btn-primary">
               {loading ? 'Generating...' : 'Generate Quiz'}
             </button>
