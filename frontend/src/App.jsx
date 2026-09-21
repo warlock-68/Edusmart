@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
 import Register from './pages/Register';
 import Login from './pages/Login';
@@ -13,25 +14,49 @@ import MyBookings from './pages/MyBookings';
 
 
 function App() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const closeMenu = () => setMenuOpen(false);
+
   return (
     <BrowserRouter>
       <nav className="navbar">
-        <span className="font-serif text-lg font-semibold text-[var(--color-ink)] flex items-center gap-2">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-bunsen)" strokeWidth="1.5">
-            <polygon points="12,2 21,7 21,17 12,22 3,17 3,7" />
-          </svg>
-          EduSmart
-        </span>
-        <NavLink to="/register" className={({isActive}) => isActive ? "active" : ""}>Register</NavLink>
-        <NavLink to="/login" className={({isActive}) => isActive ? "active" : ""}>Login</NavLink>
-        <NavLink to="/upload" className={({isActive}) => isActive ? "active" : ""}>Upload</NavLink>
-        <NavLink to="/content" className={({isActive}) => isActive ? "active" : ""}>Content</NavLink>
-        <NavLink to="/ask" className={({isActive}) => isActive ? "active" : ""}>Ask a Question</NavLink>
-        <NavLink to="/quiz" className={({isActive}) => isActive ? "active" : ""}>Quiz</NavLink>
-        <NavLink to="/dashboard" className={({isActive}) => isActive ? "active" : ""}>Dashboard</NavLink>
-        <NavLink to="/progress" className={({isActive}) => isActive ? "active" : ""}>My Progress</NavLink>
-        <NavLink to="/tutors" className={({isActive}) => isActive ? "active" : ""}>Find a Tutor</NavLink>
-        <NavLink to="/bookings" className={({isActive}) => isActive ? "active" : ""}>My Bookings</NavLink>
+        <div className="flex items-center justify-between w-full md:w-auto">
+          <span className="font-serif text-lg font-semibold text-[var(--color-ink)] flex items-center gap-2">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--color-bunsen)" strokeWidth="1.5">
+              <polygon points="12,2 21,7 21,17 12,22 3,17 3,7" />
+            </svg>
+            EduSmart
+          </span>
+
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="md:hidden p-2"
+            aria-label="Toggle menu"
+            aria-expanded={menuOpen}
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--color-ink)" strokeWidth="2">
+              {menuOpen ? (
+                <path d="M18 6 6 18M6 6l12 12" strokeLinecap="round" />
+              ) : (
+                <path d="M3 6h18M3 12h18M3 18h18" strokeLinecap="round" />
+              )}
+            </svg>
+          </button>
+        </div>
+
+        <div className={`${menuOpen ? 'flex' : 'hidden'} flex-col gap-2 w-full md:flex md:flex-row md:gap-6 md:w-auto`}>
+          <NavLink onClick={closeMenu} to="/register" className={({isActive}) => isActive ? "active" : ""}>Register</NavLink>
+          <NavLink onClick={closeMenu} to="/login" className={({isActive}) => isActive ? "active" : ""}>Login</NavLink>
+          <NavLink onClick={closeMenu} to="/upload" className={({isActive}) => isActive ? "active" : ""}>Upload</NavLink>
+          <NavLink onClick={closeMenu} to="/content" className={({isActive}) => isActive ? "active" : ""}>Content</NavLink>
+          <NavLink onClick={closeMenu} to="/ask" className={({isActive}) => isActive ? "active" : ""}>Ask a Question</NavLink>
+          <NavLink onClick={closeMenu} to="/quiz" className={({isActive}) => isActive ? "active" : ""}>Quiz</NavLink>
+          <NavLink onClick={closeMenu} to="/dashboard" className={({isActive}) => isActive ? "active" : ""}>Dashboard</NavLink>
+          <NavLink onClick={closeMenu} to="/progress" className={({isActive}) => isActive ? "active" : ""}>My Progress</NavLink>
+          <NavLink onClick={closeMenu} to="/tutors" className={({isActive}) => isActive ? "active" : ""}>Find a Tutor</NavLink>
+          <NavLink onClick={closeMenu} to="/bookings" className={({isActive}) => isActive ? "active" : ""}>My Bookings</NavLink>
+        </div>
       </nav>
       <Routes>
         <Route path="/register" element={<Register />} />
