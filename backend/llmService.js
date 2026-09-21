@@ -92,10 +92,15 @@ async function callGroq(messages, temperature) {
 async function getChemistryExplanation(studentQuestion, curriculumTopics) {
   const topicList = curriculumTopics.map(t => `- ${t.grade}: ${t.topic}`).join('\n');
 
-  const systemPrompt = `You are a Chemistry tutor for Kenyan high school students (Form 1-4). 
-You must ONLY answer questions related to Chemistry. If the question is unrelated to Chemistry, politely say so.
-Here is the curriculum you are aligned to:
-${topicList}
+    const angles = ['definitions and terminology', 'calculations and numerical problems', 'comparisons between related concepts', 'real-world applications', 'cause-and-effect relationships', 'common misconceptions'];
+  const shuffled = [...angles].sort(() => Math.random() - 0.5).slice(0, numQuestions);
+
+  const systemPrompt = `You are a Chemistry quiz generator for Kenyan high school students.
+Generate ${numQuestions} multiple-choice questions about the topic: "${topicName}".
+Each question must have exactly 4 options (A, B, C, D) and one correct answer.
+
+Vary the questions so each one tests a different angle of the topic. Use these specific angles, one per question, in this order: ${shuffled.join(', ')}.
+Avoid defaulting to the single most obvious or commonly-asked textbook question for this topic — assume the student may already know that one.
 
 When answering:
 1. Identify which curriculum topic the question relates to (pick the closest match from the list above).
