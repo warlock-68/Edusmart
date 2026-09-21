@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 const pool = require('../db');
 const verifyToken = require('../middleware/auth');
 const requireRole = require('../middleware/role');
@@ -40,6 +41,18 @@ router.post('/upload', verifyToken, requireRole('teacher', 'tutor', 'admin'), up
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No PDF file uploaded' });
+    }
+
+    // Verify the file is actually a PDF by checking its binary signature (%PDF-),
+    // not just trusting the extension/MIME type which can be faked
+    const buffer = Buffer.alloc(5);
+    const fd = fs.openSync(req.file.path, 'r');
+    fs.readSync(fd, buffer, 0, 5, 0);
+    fs.closeSync(fd);
+
+    if (buffer.toString('ascii') !== '%PDF-') {
+      fs.unlinkSync(req.file.path); // delete the fake file we just saved
+      return res.status(400).json({ error: 'The uploaded file is not a valid PDF' });
     }
 
     const { title, topic_id } = req.body;
