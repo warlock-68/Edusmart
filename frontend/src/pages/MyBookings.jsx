@@ -22,6 +22,9 @@ function MyBookings() {
   // Student-only: rating per booking
   const [ratingInputs, setRatingInputs] = useState({});
 
+  // Tutor-only: meeting link per booking
+  const [linkInputs, setLinkInputs] = useState({});
+
   const token = localStorage.getItem('token');
   const authHeader = { headers: { Authorization: `Bearer ${token}` } };
 
@@ -116,6 +119,21 @@ function MyBookings() {
     }
   };
 
+  const submitLink = async (bookingId) => {
+    const link = linkInputs[bookingId];
+    if (!link || !link.trim()) {
+      setMessage('Enter a meeting link first.');
+      return;
+    }
+    try {
+      await api.put(`/bookings/${bookingId}/link`, { meeting_link: link }, authHeader);
+      setMessage('Meeting link saved');
+      loadBookings();
+    } catch (err) {
+      setMessage(err.response?.data?.error || 'Could not save meeting link');
+    }
+  };
+
   return (
     <div className="page-shell--wide">
       <div className="panel">
@@ -205,6 +223,22 @@ function MyBookings() {
                 </div>
               )}
 
+              {isTutor && b.status === 'accepted' && (
+                <div className="flex gap-2 items-center mt-2">
+                  <input
+                    type="text"
+                    placeholder="Paste Google Meet link"
+                    defaultValue={b.meeting_link || ''}
+                    onChange={(e) => setLinkInputs({ ...linkInputs, [b.id]: e.target.value })}
+                    className="field-input mb-0"
+                    style={{ width: 'auto', display: 'inline-block', minWidth: '220px' }}
+                  />
+                  <button onClick={() => submitLink(b.id)} className="btn-secondary">
+                    {b.meeting_link ? 'Update Link' : 'Send Link'}
+                  </button>
+                </div>
+              )}
+
               {!isTutor && b.suggested_time && b.status === 'pending' && (
                 <div className="flex gap-2">
                   <button onClick={() => respondToSuggestion(b.id, true)} className="btn-primary">Accept New Time</button>
@@ -212,7 +246,7 @@ function MyBookings() {
                 </div>
               )}
 
-              {!isTutor && b.status === 'accepted' && (
+              {!isTutor && !!b.is_completed && (
                 <div className="flex gap-2 items-center mt-2">
                   <select
                     onChange={(e) => setRatingInputs({ ...ratingInputs, [b.id]: { ...ratingInputs[b.id], rating: e.target.value } })}
@@ -224,6 +258,16 @@ function MyBookings() {
                   </select>
                   <button onClick={() => submitRating(b.id)} className="btn-secondary">Submit Rating</button>
                 </div>
+              )}
+
+              {!isTutor && b.status === 'accepted' && b.meeting_link && (
+                <p className="mt-2">
+                  Meeting link: <a href={b.meeting_link} target="_blank" rel="noreferrer" className="underline text-[var(--color-blue)]">{b.meeting_link}</a>
+                </p>
+              )}
+
+              {!isTutor && b.status === 'accepted' && !b.is_completed && (
+                <p className="text-[var(--color-ink)]/60 mt-2 text-sm">You'll be able to rate this session after it takes place.</p>
               )}
             </div>
           ))
