@@ -28,14 +28,20 @@ router.get('/overview', verifyToken, requireRole('teacher', 'tutor', 'admin'), a
     `);
 
     const [quizPerformance] = await pool.query(`
-      SELECT curriculum_topics.topic, curriculum_topics.grade,
-             COUNT(quiz_attempts.id) AS attempts,
-             AVG(quiz_attempts.score) AS avg_score
-      FROM quiz_attempts
-      JOIN quizzes ON quiz_attempts.quiz_id = quizzes.id
-      JOIN curriculum_topics ON quizzes.topic_id = curriculum_topics.id
-      GROUP BY curriculum_topics.id
-      ORDER BY avg_score ASC
+      SELECT topic_id, topic, grade,
+             COUNT(*) AS attempts,
+             AVG(pct) * 100 AS avg_percentage
+      FROM (
+        SELECT curriculum_topics.id AS topic_id, curriculum_topics.topic, curriculum_topics.grade,
+               (quiz_attempts.score / (
+                 SELECT COUNT(*) FROM quiz_questions WHERE quiz_questions.quiz_id = quiz_attempts.quiz_id
+               )) AS pct
+        FROM quiz_attempts
+        JOIN quizzes ON quiz_attempts.quiz_id = quizzes.id
+        JOIN curriculum_topics ON quizzes.topic_id = curriculum_topics.id
+      ) AS attempt_scores
+      GROUP BY topic_id, topic, grade
+      ORDER BY avg_percentage ASC
     `);
 
     res.json({ downloads, topicEngagement, quizPerformance });

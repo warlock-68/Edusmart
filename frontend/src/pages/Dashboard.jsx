@@ -55,14 +55,14 @@ function Dashboard() {
               <tr><th>Grade</th><th>Topic</th><th>Attempts</th><th>Avg Score</th></tr>
             </thead>
             <tbody>
-              {data.quizPerformance.map((q, i) => {
-                const avg = Number(q.avg_score);
+                            {data.quizPerformance.map((q, i) => {
+                const avg = Number(q.avg_percentage);
                 return (
                   <tr key={i}>
                     <td>{q.grade}</td>
                     <td>{q.topic}</td>
                     <td>{q.attempts}</td>
-                    <td>{Number.isFinite(avg) ? avg.toFixed(1) : '—'}</td>
+                    <td>{Number.isFinite(avg) ? `${Math.round(avg)}%` : '—'}</td>
                   </tr>
                 );
               })}
@@ -74,4 +74,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default Dashboard;                                         
