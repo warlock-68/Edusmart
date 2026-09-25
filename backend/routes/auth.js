@@ -23,6 +23,10 @@ router.post('/register', async (req, res) => {
     if (password.length < 6) {
       return res.status(400).json({ error: 'Password must be at least 6 characters' });
     }
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+      return res.status(400).json({ error: 'Please enter a valid email address' });
+    }
 
     if (!ALLOWED_SELF_REGISTER_ROLES.includes(role)) {
       return res.status(400).json({
