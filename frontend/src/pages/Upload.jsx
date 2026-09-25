@@ -24,7 +24,7 @@ function Upload() {
       .finally(() => setLoadingTopics(false));
   }, []);
 
-  const handleFileChange = (e) => {
+    const handleFileChange = (e) => {
     const selected = e.target.files[0];
     if (!selected) {
       setFile(null);
@@ -35,6 +35,13 @@ function Upload() {
       setMessageType('error');
       setFile(null);
       setFileInputKey(k => k + 1); // clear the invalid selection from the input
+      return;
+    }
+    if (selected.size > 10 * 1024 * 1024) {
+      setMessage('File is too large. Maximum size is 10MB.');
+      setMessageType('error');
+      setFile(null);
+      setFileInputKey(k => k + 1);
       return;
     }
     setFile(selected);

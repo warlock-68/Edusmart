@@ -77,6 +77,16 @@ router.post('/upload', verifyToken, requireRole('teacher', 'tutor', 'admin'), up
     res.status(500).json({ error: 'Server error' });
   }
 });
+// Handles errors thrown by multer during upload (e.g. file too large)
+router.use('/upload', (err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: 'File too large. Maximum size is 10MB.' });
+    }
+    return res.status(400).json({ error: err.message });
+  }
+  next(err);
+});
 
 // Handle multer errors (e.g. wrong file type, too large) with a clean message
 router.use((err, req, res, next) => {
