@@ -36,13 +36,14 @@ function Register() {
 
           <label className="field-label">Email</label>
           <input
-            name="email"
-            type="email"
-            value={form.email}
-            onChange={handleChange}
-            required
-            className="field-input"
-          />
+  name="email"
+  type="email"
+  autoComplete="off"
+  value={form.email}
+  onChange={handleChange}
+  required
+  className="field-input"
+/>
 
           <label className="field-label">Password</label>
           <input
