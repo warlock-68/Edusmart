@@ -1,10 +1,17 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import api from '../api';
 
 function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [message, setMessage] = useState('');
+  const [searchParams] = useSearchParams();
+
+useEffect(() => {
+  if (searchParams.get('sessionExpired') === 'true') {
+    setMessage('Your session has expired. Please log in again.');
+  }
+}, [searchParams]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });

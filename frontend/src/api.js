@@ -13,7 +13,18 @@ api.interceptors.response.use(
       error.response = {
         data: { error: 'Cannot reach the server. Please check your connection and try again.' },
       };
+      return Promise.reject(error);
     }
+
+    const code = error.response.data?.code;
+    if (code === 'TOKEN_EXPIRED' || code === 'TOKEN_INVALID') {
+      // Session is dead — clear stale data and bounce to Login
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login?sessionExpired=true';
+      return Promise.reject(error);
+    }
+
     return Promise.reject(error);
   }
 );
