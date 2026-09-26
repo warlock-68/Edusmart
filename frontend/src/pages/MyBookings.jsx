@@ -8,7 +8,8 @@ function MyBookings() {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
+  const [profileMessage, setProfileMessage] = useState('');
+  const [bookingMessages, setBookingMessages] = useState({});
 
   // Tutor-only: availability + topics management
   const [availabilityNote, setAvailabilityNote] = useState('');
@@ -27,6 +28,10 @@ function MyBookings() {
 
   const token = localStorage.getItem('token');
   const authHeader = { headers: { Authorization: `Bearer ${token}` } };
+
+  const setBookingMessage = (bookingId, msg) => {
+    setBookingMessages(prev => ({ ...prev, [bookingId]: msg }));
+  };
 
   const loadBookings = () => {
     const endpoint = isTutor ? '/bookings/incoming' : '/bookings/mine';
@@ -50,10 +55,10 @@ function MyBookings() {
     if (!availabilityNote.trim()) return;
     try {
       await api.put('/tutors/availability', { availability_note: availabilityNote }, authHeader);
-      setMessage('Availability updated');
+      setProfileMessage('Availability updated');
       setAvailabilityNote('');
     } catch (err) {
-      setMessage(err.response?.data?.error || 'Could not update availability');
+      setProfileMessage(err.response?.data?.error || 'Could not update availability');
     }
   };
 
@@ -66,7 +71,7 @@ function MyBookings() {
       setMyTopics(res.data);
       setNewTopicId('');
     } catch (err) {
-      setMessage(err.response?.data?.error || 'Could not add topic');
+      setProfileMessage(err.response?.data?.error || 'Could not add topic');
     }
   };
 
@@ -75,62 +80,62 @@ function MyBookings() {
       await api.delete(`/tutors/topics/${topicId}`, authHeader);
       setMyTopics(myTopics.filter(t => t.id !== topicId));
     } catch (err) {
-      setMessage(err.response?.data?.error || 'Could not remove topic');
+      setProfileMessage(err.response?.data?.error || 'Could not remove topic');
     }
   };
 
   const respondToBooking = async (bookingId, action) => {
     const suggested_time = suggestInputs[bookingId];
     if (action === 'suggest' && !suggested_time) {
-      setMessage('Pick a time to suggest first.');
+      setBookingMessage(bookingId, 'Pick a time to suggest first.');
       return;
     }
     try {
       await api.put(`/bookings/${bookingId}/respond`, { action, suggested_time }, authHeader);
-      setMessage('Response sent');
+      setBookingMessage(bookingId, 'Response sent');
       loadBookings();
     } catch (err) {
-      setMessage(err.response?.data?.error || 'Could not respond to booking');
+      setBookingMessage(bookingId, err.response?.data?.error || 'Could not respond to booking');
     }
   };
 
   const respondToSuggestion = async (bookingId, accept) => {
     try {
       await api.put(`/bookings/${bookingId}/respond-suggestion`, { accept }, authHeader);
-      setMessage(accept ? 'New time accepted' : 'Suggested time declined');
+      setBookingMessage(bookingId, accept ? 'New time accepted' : 'Suggested time declined');
       loadBookings();
     } catch (err) {
-      setMessage(err.response?.data?.error || 'Could not respond');
+      setBookingMessage(bookingId, err.response?.data?.error || 'Could not respond');
     }
   };
 
   const submitRating = async (bookingId) => {
     const entry = ratingInputs[bookingId] || {};
     if (!entry.rating) {
-      setMessage('Pick a star rating first.');
+      setBookingMessage(bookingId, 'Pick a star rating first.');
       return;
     }
     try {
       await api.post(`/bookings/${bookingId}/rate`, entry, authHeader);
-      setMessage('Thanks for your rating!');
+      setBookingMessage(bookingId, 'Thanks for your rating!');
       loadBookings();
     } catch (err) {
-      setMessage(err.response?.data?.error || 'Could not submit rating');
+      setBookingMessage(bookingId, err.response?.data?.error || 'Could not submit rating');
     }
   };
 
   const submitLink = async (bookingId) => {
     const link = linkInputs[bookingId];
     if (!link || !link.trim()) {
-      setMessage('Enter a meeting link first.');
+      setBookingMessage(bookingId, 'Enter a meeting link first.');
       return;
     }
     try {
       await api.put(`/bookings/${bookingId}/link`, { meeting_link: link }, authHeader);
-      setMessage('Meeting link saved');
+      setBookingMessage(bookingId, 'Meeting link saved');
       loadBookings();
     } catch (err) {
-      setMessage(err.response?.data?.error || 'Could not save meeting link');
+      setBookingMessage(bookingId, err.response?.data?.error || 'Could not save meeting link');
     }
   };
 
@@ -179,6 +184,8 @@ function MyBookings() {
               </select>
               <button type="submit" className="btn-secondary">Add Topic</button>
             </form>
+
+            {profileMessage && <p className="mt-3">{profileMessage}</p>}
           </div>
         )}
 
@@ -269,11 +276,11 @@ function MyBookings() {
               {!isTutor && b.status === 'accepted' && !b.is_completed && (
                 <p className="text-[var(--color-ink)]/60 mt-2 text-sm">You'll be able to rate this session after it takes place.</p>
               )}
+
+              {bookingMessages[b.id] && <p className="mt-3">{bookingMessages[b.id]}</p>}
             </div>
           ))
         )}
-
-        {message && <p className="mt-4">{message}</p>}
       </div>
     </div>
   );

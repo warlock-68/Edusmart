@@ -125,9 +125,18 @@ router.put('/:id/respond', verifyToken, requireRole('tutor'), async (req, res) =
       return res.status(400).json({ error: 'This booking has already been responded to' });
     }
 
-    if (action === 'accept') {
+            if (action === 'accept') {
+      const [[conflict]] = await pool.query(
+        `SELECT id FROM bookings
+         WHERE tutor_id = ? AND status = 'accepted' AND id != ?
+           AND ABS(TIMESTAMPDIFF(MINUTE, requested_time, ?)) < 60`,
+        [booking.tutor_id, booking.id, booking.requested_time]
+      );
+      if (conflict) {
+        return res.status(409).json({ error: 'You already have an accepted session that overlaps with this time. Decline or suggest a different time for this request instead.' });
+      }
       await pool.query('UPDATE bookings SET status = "accepted" WHERE id = ?', [booking.id]);
-    } else if (action === 'decline') {
+    } else if (action === 'decline')  {
       await pool.query('UPDATE bookings SET status = "declined" WHERE id = ?', [booking.id]);
     } else {
       await pool.query('UPDATE bookings SET suggested_time = ? WHERE id = ?', [suggested_time, booking.id]);
