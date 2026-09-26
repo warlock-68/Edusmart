@@ -29,8 +29,8 @@ function MyBookings() {
   const token = localStorage.getItem('token');
   const authHeader = { headers: { Authorization: `Bearer ${token}` } };
 
-  const setBookingMessage = (bookingId, msg) => {
-    setBookingMessages(prev => ({ ...prev, [bookingId]: msg }));
+  const setBookingMessage = (bookingId, text, type = 'error') => {
+    setBookingMessages(prev => ({ ...prev, [bookingId]: { text, type } }));
   };
 
   const loadBookings = () => {
@@ -92,7 +92,7 @@ function MyBookings() {
     }
     try {
       await api.put(`/bookings/${bookingId}/respond`, { action, suggested_time }, authHeader);
-      setBookingMessage(bookingId, 'Response sent');
+      setBookingMessage(bookingId, 'Response sent', 'success');
       loadBookings();
     } catch (err) {
       setBookingMessage(bookingId, err.response?.data?.error || 'Could not respond to booking');
@@ -102,7 +102,7 @@ function MyBookings() {
   const respondToSuggestion = async (bookingId, accept) => {
     try {
       await api.put(`/bookings/${bookingId}/respond-suggestion`, { accept }, authHeader);
-      setBookingMessage(bookingId, accept ? 'New time accepted' : 'Suggested time declined');
+      setBookingMessage(bookingId, accept ? 'New time accepted' : 'Suggested time declined', 'success');
       loadBookings();
     } catch (err) {
       setBookingMessage(bookingId, err.response?.data?.error || 'Could not respond');
@@ -117,7 +117,7 @@ function MyBookings() {
     }
     try {
       await api.post(`/bookings/${bookingId}/rate`, entry, authHeader);
-      setBookingMessage(bookingId, 'Thanks for your rating!');
+      setBookingMessage(bookingId, 'Thanks for your rating!', 'success');
       loadBookings();
     } catch (err) {
       setBookingMessage(bookingId, err.response?.data?.error || 'Could not submit rating');
@@ -132,10 +132,20 @@ function MyBookings() {
     }
     try {
       await api.put(`/bookings/${bookingId}/link`, { meeting_link: link }, authHeader);
-      setBookingMessage(bookingId, 'Meeting link saved');
+      setBookingMessage(bookingId, 'Meeting link saved', 'success');
       loadBookings();
     } catch (err) {
       setBookingMessage(bookingId, err.response?.data?.error || 'Could not save meeting link');
+    }
+  };
+
+  const cancelBooking = async (bookingId) => {
+    try {
+      await api.put(`/bookings/${bookingId}/cancel`, {}, authHeader);
+      setBookingMessage(bookingId, 'Booking cancelled', 'success');
+      loadBookings();
+    } catch (err) {
+      setBookingMessage(bookingId, err.response?.data?.error || 'Could not cancel booking');
     }
   };
 
@@ -231,7 +241,7 @@ function MyBookings() {
               )}
 
               {isTutor && b.status === 'accepted' && (
-                <div className="flex gap-2 items-center mt-2">
+                <div className="flex gap-2 items-center mt-2 flex-wrap">
                   <input
                     type="text"
                     placeholder="Paste Google Meet link"
@@ -243,6 +253,11 @@ function MyBookings() {
                   <button onClick={() => submitLink(b.id)} className="btn-secondary">
                     {b.meeting_link ? 'Update Link' : 'Send Link'}
                   </button>
+                  {!b.is_completed && (
+                    <button onClick={() => cancelBooking(b.id)} className="btn-secondary text-[var(--color-cinnabar)]">
+                      Cancel Session
+                    </button>
+                  )}
                 </div>
               )}
 
@@ -274,10 +289,19 @@ function MyBookings() {
               )}
 
               {!isTutor && b.status === 'accepted' && !b.is_completed && (
-                <p className="text-[var(--color-ink)]/60 mt-2 text-sm">You'll be able to rate this session after it takes place.</p>
+                <div className="mt-2">
+                  <p className="text-[var(--color-ink)]/60 text-sm mb-2">You'll be able to rate this session after it takes place.</p>
+                  <button onClick={() => cancelBooking(b.id)} className="btn-secondary text-[var(--color-cinnabar)]">
+                    Cancel Session
+                  </button>
+                </div>
               )}
 
-              {bookingMessages[b.id] && <p className="mt-3">{bookingMessages[b.id]}</p>}
+              {bookingMessages[b.id] && (
+                <p className={`mt-3 ${bookingMessages[b.id].type === 'success' ? 'badge-success' : 'badge-error'}`}>
+                  {bookingMessages[b.id].text}
+                </p>
+              )}
             </div>
           ))
         )}
