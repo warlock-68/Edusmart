@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const rateLimit = require('express-rate-limit');
 const pool = require('../db');
 const { sendPasswordResetEmail } = require('../emailService');
 
@@ -12,6 +13,30 @@ const router = express.Router();
 // list and create admin accounts a different way (e.g. directly in the DB
 // or via a separate protected endpoint) rather than letting anyone self-register as one.
 const ALLOWED_SELF_REGISTER_ROLES = ['student', 'teacher', 'tutor'];
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5, // 5 attempts per IP per window
+  message: { error: 'Too many login attempts. Please try again in 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 3, // 3 reset requests per IP per window
+  message: { error: 'Too many password reset requests. Please try again in 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+const resetPasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5, // 5 code attempts per IP per window
+  message: { error: 'Too many attempts. Please try again in 15 minutes.' },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 
 // Register a new user
 router.post('/register', async (req, res) => {
@@ -54,7 +79,7 @@ router.post('/register', async (req, res) => {
 });
 
 // Log in an existing user
-router.post('/login', async (req, res) => {
+router.post('/login', loginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
@@ -90,7 +115,7 @@ router.post('/login', async (req, res) => {
 });
 
 // POST /api/auth/forgot-password - request a reset code by email
-router.post('/forgot-password', async (req, res) => {
+router.post('/forgot-password', forgotPasswordLimiter, async (req, res) => {
   try {
     const { email } = req.body;
     if (!email) {
@@ -129,7 +154,7 @@ router.post('/forgot-password', async (req, res) => {
 });
 
 // POST /api/auth/reset-password - verify code and set a new password
-router.post('/reset-password', async (req, res) => {
+router.post('/reset-password', resetPasswordLimiter, async (req, res) => {
   try {
     const { email, code, newPassword } = req.body;
     if (!email || !code || !newPassword) {
