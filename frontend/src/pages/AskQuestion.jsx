@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
-
+import AtomDiagram from './AtomDiagram';
 function AskQuestion() {
   const [question, setQuestion] = useState('');
   const [answer, setAnswer] = useState(null);
@@ -70,6 +70,7 @@ function AskQuestion() {
                 <p className="mb-4"><span className="field-label inline">Topic:</span> {answer.matched_topic}</p>
               </>
             )}
+            <AtomDiagram diagram={answer.diagram} />
             <p className="mb-4"><span className="field-label inline">Explanation:</span> {answer.explanation}</p>
             <p className="mb-4"><span className="field-label inline">Example:</span> {answer.example}</p>
             <p className="mb-4"><span className="field-label inline">Practice Question:</span> {answer.practice_question}</p>
