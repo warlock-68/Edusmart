@@ -13,6 +13,9 @@ router.post('/', verifyToken, async (req, res) => {
     if (!question || typeof question !== 'string' || !question.trim()) {
       return res.status(400).json({ error: 'Question is required' });
     }
+    if (question.trim().length > 1000) {
+  return res.status(400).json({ error: 'Question is too long. Please keep it under 1000 characters.' });
+}
 
     const [topics] = await pool.query('SELECT id, grade, topic FROM curriculum_topics');
 
