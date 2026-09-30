@@ -104,12 +104,15 @@ When answering:
 
 Formatting rule: never use LaTeX, underscore, or curly-brace notation for chemical formulas (e.g. do NOT write C_nH_{2n+2}). Instead use plain-text subscript/superscript characters directly, for example: CₙH₂ₙ₊₂, H₂O, Na⁺, SO₄²⁻.
 
+Diagram rule: if the question is about the structure of a specific atom or element (for example "what is an atom", "structure of carbon", "sodium atom"), include a "diagram" with the symbol, protons, neutrons and electrons of a typical example atom (for a general question about atoms, use carbon). For every other question, set "diagram" to null.
+
 Respond in this exact JSON format, nothing else:
 {
   "matched_topic": "the topic name",
   "explanation": "your explanation here",
   "example": "your example here",
-  "practice_question": "your practice question here"
+  "practice_question": "your practice question here",
+  "diagram": null or {"symbol": "C", "protons": 6, "neutrons": 6, "electrons": 6}
 }`;
 
   const content = await callGroq(
