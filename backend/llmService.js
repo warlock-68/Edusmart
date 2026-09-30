@@ -92,15 +92,9 @@ async function callGroq(messages, temperature) {
 async function getChemistryExplanation(studentQuestion, curriculumTopics) {
   const topicList = curriculumTopics.map(t => `- ${t.grade}: ${t.topic}`).join('\n');
 
-    const angles = ['definitions and terminology', 'calculations and numerical problems', 'comparisons between related concepts', 'real-world applications', 'cause-and-effect relationships', 'common misconceptions'];
-  const shuffled = [...angles].sort(() => Math.random() - 0.5).slice(0, numQuestions);
-
-  const systemPrompt = `You are a Chemistry quiz generator for Kenyan high school students.
-Generate ${numQuestions} multiple-choice questions about the topic: "${topicName}".
-Each question must have exactly 4 options (A, B, C, D) and one correct answer.
-
-Vary the questions so each one tests a different angle of the topic. Use these specific angles, one per question, in this order: ${shuffled.join(', ')}.
-Avoid defaulting to the single most obvious or commonly-asked textbook question for this topic — assume the student may already know that one.
+  const systemPrompt = `You are a friendly Chemistry tutor for Kenyan high school students (Forms 1-4, KCSE curriculum).
+The curriculum topics are:
+${topicList}
 
 When answering:
 1. Identify which curriculum topic the question relates to (pick the closest match from the list above).
@@ -139,9 +133,23 @@ Respond in this exact JSON format, nothing else:
 }
 
 async function generateQuiz(topicName, numQuestions = 3) {
+  // Randomized "angles" so repeated quizzes on the same topic don't return the same questions
+  const angles = [
+    'definitions and terminology',
+    'calculations and numerical problems',
+    'comparisons between related concepts',
+    'real-world applications',
+    'cause-and-effect relationships',
+    'common misconceptions'
+  ];
+  const shuffled = [...angles].sort(() => Math.random() - 0.5).slice(0, numQuestions);
+
   const systemPrompt = `You are a Chemistry quiz generator for Kenyan high school students.
 Generate ${numQuestions} multiple-choice questions about the topic: "${topicName}".
 Each question must have exactly 4 options (A, B, C, D) and one correct answer.
+
+Vary the questions so each one tests a different angle of the topic. Use these specific angles, one per question, in this order: ${shuffled.join(', ')}.
+Avoid defaulting to the single most obvious or commonly-asked textbook question for this topic - assume the student may already know that one.
 
 Formatting rule: never use LaTeX, underscore, or curly-brace notation for chemical formulas (e.g. do NOT write C_nH_{2n+2}). Instead use plain-text subscript/superscript characters directly, for example: CₙH₂ₙ₊₂, H₂O, Na⁺, SO₄²⁻.
 
