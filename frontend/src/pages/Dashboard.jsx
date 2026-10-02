@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../api';
+import BarChart from './BarChart';
 
 function Dashboard() {
   const [data, setData] = useState(null);
@@ -19,6 +20,21 @@ function Dashboard() {
     <div className="page-shell--wide">
       <div className="panel">
         <h2 className="text-2xl mb-6">Analytics Dashboard</h2>
+
+        <BarChart
+  title="Questions Asked per Topic"
+  rows={data.topicEngagement
+    .filter((t) => Number(t.questions_asked) > 0)
+    .sort((a, b) => Number(b.questions_asked) - Number(a.questions_asked))
+    .map((t) => ({ label: `${t.grade}: ${t.topic}`, value: t.questions_asked }))}
+/>
+<BarChart
+  title="Average Quiz Score per Topic"
+  suffix="%"
+  max={100}
+  rows={data.quizPerformance.map((q) => ({ label: `${q.grade}: ${q.topic}`, value: q.avg_percentage }))}
+  colorFor={(v) => (v < 40 ? '#dc2626' : v < 60 ? '#f59e0b' : '#16a34a')}
+/>
 
         <h3 className="text-lg mb-3">Content Downloads</h3>
         {data.downloads.length === 0 ? <p className="mb-8">No downloads yet.</p> : (
