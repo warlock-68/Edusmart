@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../api';
+import ScoreChart from './ScoreChart';
 
 function MyProgress() {
   const [weakAreas, setWeakAreas] = useState([]);
@@ -41,7 +42,7 @@ function MyProgress() {
         <h2 className="text-2xl mb-6">My Progress</h2>
 
         {error && <p className="badge-error mb-4">{error}</p>}
-
+        <ScoreChart areas={weakAreas} />
         <h3 className="text-lg mb-3">Topics to Revisit</h3>
         {loadingWeakAreas ? (
           <p>Loading your progress...</p>
