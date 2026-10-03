@@ -8,6 +8,7 @@ const quizRoutes = require('./routes/quiz');
 const dashboardRoutes = require('./routes/dashboard');
 const tutorRoutes = require('./routes/tutors');
 const bookingRoutes = require('./routes/bookings');
+const applicationRoutes = require('./routes/applications');
 
 
 const app = express();
@@ -25,6 +26,7 @@ app.use('/api/quiz', quizRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/tutors', tutorRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/applications', applicationRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
