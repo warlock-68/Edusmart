@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../api';
+import PdfBadge from './PdfBadge';
 
 function ContentList() {
   const [content, setContent] = useState([]);
@@ -57,12 +58,15 @@ function ContentList() {
           <div>
             {content.map((item) => (
               <div key={item.id} className="py-3 border-b border-[var(--color-line)] flex items-center justify-between flex-wrap gap-2">
-                <div>
-                  <span className="font-medium">{item.title}</span>
-                  <span className="text-[var(--color-ink)]/60">
-                    {' '}— {item.grade}, {item.topic} (by {item.uploaded_by})
-                  </span>
-                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+  <PdfBadge grade={item.grade} />
+  <div>
+    <span className="font-medium">{item.title}</span>
+    <span className="text-[var(--color-ink)]/60">
+      {' '}— {item.grade}, {item.topic} (by {item.uploaded_by})
+    </span>
+  </div>
+</div>
                 <button
                   onClick={() => handleDownload(item)}
                   disabled={downloadingId === item.id}
