@@ -210,6 +210,27 @@ router.put('/:id/link', verifyToken, requireRole('tutor'), async (req, res) => {
     res.status(500).json({ error: 'Could not save meeting link' });
   }
 });
+// PUT /api/bookings/:id/cancel - student or tutor cancels an accepted booking (before it happens)
+router.put('/:id/cancel', verifyToken, requireRole('student', 'tutor'), async (req, res) => {
+  try {
+    const [[booking]] = await pool.query('SELECT * FROM bookings WHERE id = ?', [req.params.id]);
+    if (!booking || (booking.student_id !== req.user.id && booking.tutor_id !== req.user.id)) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+    if (booking.status !== 'accepted') {
+      return res.status(400).json({ error: 'Only an accepted booking can be cancelled' });
+    }
+    if (new Date(booking.requested_time).getTime() <= Date.now()) {
+      return res.status(400).json({ error: 'This session has already taken place and cannot be cancelled' });
+    }
+
+    await pool.query('UPDATE bookings SET status = "cancelled" WHERE id = ?', [booking.id]);
+    res.json({ message: 'Booking cancelled' });
+  } catch (err) {
+    console.error('Error cancelling booking:', err);
+    res.status(500).json({ error: 'Could not cancel booking' });
+  }
+});
 
 // POST /api/bookings/:id/rate - student rates a completed session
 router.post('/:id/rate', verifyToken, requireRole('student'), async (req, res) => {
