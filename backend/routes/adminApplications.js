@@ -4,6 +4,8 @@ const path = require('path');
 const pool = require('../db');
 const verifyToken = require('../middleware/auth');
 const requireRole = require('../middleware/role');
+const { sendApplicationApprovedEmail, sendApplicationRejectedEmail } = require('../emailService');
+
 
 const router = express.Router();
 
@@ -126,6 +128,11 @@ router.put('/:id/approve', async (req, res) => {
     );
 
     await conn.commit();
+        try {
+      await sendApplicationApprovedEmail(application.email, application.full_name);
+    } catch (emailErr) {
+      console.error('Approval email failed:', emailErr);
+    }
     res.json({ message: `Approved. ${application.full_name} can now log in as a tutor.` });
   } catch (err) {
     await conn.rollback();
@@ -146,6 +153,10 @@ router.put('/:id/reject', async (req, res) => {
     }
 
     const note = typeof req.body.note === 'string' ? req.body.note.trim().slice(0, 500) : '';
+        const [found] = await pool.query(
+      'SELECT full_name, email FROM tutor_applications WHERE id = ?',
+      [applicationId]
+    );
 
     const [result] = await pool.query(
       `UPDATE tutor_applications
@@ -169,6 +180,13 @@ router.put('/:id/reject', async (req, res) => {
     }
     await pool.query('DELETE FROM tutor_application_documents WHERE application_id = ?', [applicationId]);
 
+        if (found.length > 0) {
+      try {
+        await sendApplicationRejectedEmail(found[0].email, found[0].full_name, note);
+      } catch (emailErr) {
+        console.error('Rejection email failed:', emailErr);
+      }
+    }
     res.json({ message: 'Application rejected.' });
   } catch (err) {
     console.error(err);
