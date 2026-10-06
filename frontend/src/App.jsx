@@ -12,8 +12,7 @@ import MyProgress from './pages/MyProgress';
 import Tutors from './pages/Tutors';
 import MyBookings from './pages/MyBookings';
 import BecomeTutor from './pages/BecomeTutor';
-
-
+import AdminApplications from './pages/AdminApplications';
 
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -59,12 +58,14 @@ function App() {
           <NavLink onClick={closeMenu} to="/progress" className={({isActive}) => isActive ? "active" : ""}>My Progress</NavLink>
           <NavLink onClick={closeMenu} to="/tutors" className={({isActive}) => isActive ? "active" : ""}>Find a Tutor</NavLink>
           <NavLink onClick={closeMenu} to="/bookings" className={({isActive}) => isActive ? "active" : ""}>My Bookings</NavLink>
+          <NavLink onClick={closeMenu} to="/admin/applications" className={({isActive}) => isActive ? "active" : ""}>Applications</NavLink>
         </div>
       </nav>
       <Routes>
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/become-tutor" element={<BecomeTutor />} />
         <Route path="/upload" element={<Upload />} />
         <Route path="/content" element={<ContentList />} />
         <Route path="/ask" element={<AskQuestion />} />
@@ -73,7 +74,7 @@ function App() {
         <Route path="/progress" element={<MyProgress />} />
         <Route path="/tutors" element={<Tutors />} />
         <Route path="/bookings" element={<MyBookings />} />
-        <Route path="/become-tutor" element={<BecomeTutor />} />
+        <Route path="/admin/applications" element={<AdminApplications />} />
         <Route path="/" element={<h2 style={{ textAlign: 'center' }}>Welcome to EduSmart</h2>} />
       </Routes>
     </BrowserRouter>

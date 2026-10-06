@@ -5,6 +5,16 @@ const api = axios.create({
   timeout: 10000, // 10 seconds — treat a hung request as "unreachable"
 });
 
+// Attach the login token to every request automatically
+// (skipped if a page already set its own Authorization header)
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token && !config.headers.Authorization) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
 api.interceptors.response.use(
   (response) => response, // success — pass through unchanged
   (error) => {
