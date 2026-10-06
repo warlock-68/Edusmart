@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard';
 import MyProgress from './pages/MyProgress';
 import Tutors from './pages/Tutors';
 import MyBookings from './pages/MyBookings';
+import BecomeTutor from './pages/BecomeTutor';
 
 
 
@@ -71,6 +72,7 @@ function App() {
         <Route path="/progress" element={<MyProgress />} />
         <Route path="/tutors" element={<Tutors />} />
         <Route path="/bookings" element={<MyBookings />} />
+        <Route path="/become-tutor" element={<BecomeTutor />} />
         <Route path="/" element={<h2 style={{ textAlign: 'center' }}>Welcome to EduSmart</h2>} />
       </Routes>
     </BrowserRouter>
