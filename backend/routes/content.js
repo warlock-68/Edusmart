@@ -37,7 +37,7 @@ const upload = multer({
 });
 
 // POST /api/content/upload
-router.post('/upload', verifyToken, requireRole('teacher', 'tutor', 'admin'), upload.single('file'), async (req, res) => {
+router.post('/upload', verifyToken, requireRole('tutor', 'admin'), upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No PDF file uploaded' });

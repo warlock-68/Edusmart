@@ -6,8 +6,8 @@ const { getChemistryExplanation } = require('../llmService');
 
 const router = express.Router();
 
-// GET /api/dashboard/overview - admin/teacher analytics
-router.get('/overview', verifyToken, requireRole('teacher', 'tutor', 'admin'), async (req, res) => {
+// GET /api/dashboard/overview - admin/tutor analytics
+router.get('/overview', verifyToken, requireRole('tutor', 'admin'), async (req, res) => {
   try {
     const [downloads] = await pool.query(`
       SELECT content.title, curriculum_topics.topic, COUNT(usage_logs.id) AS download_count
