@@ -47,16 +47,20 @@ function AdminApplications() {
     }
   };
 
+  // Approve/reject also send an email, which can be slow, so they get a longer timeout
+  const SLOW_REQUEST = { timeout: 30000 };
+
   const approve = async (app) => {
     if (!window.confirm(`Approve ${app.full_name} as a tutor?`)) return;
     setBusyId(app.id);
     try {
-      const res = await api.put(`/admin/applications/${app.id}/approve`);
+      const res = await api.put(`/admin/applications/${app.id}/approve`, {}, SLOW_REQUEST);
       setMessage(app.id, res.data.message, 'success');
-      await loadApplications();
     } catch (err) {
       setMessage(app.id, err.response?.data?.error || 'Something went wrong', 'error');
     } finally {
+      // Always reload so the screen matches the real status, even after an error
+      await loadApplications();
       setBusyId(null);
     }
   };
@@ -65,14 +69,16 @@ function AdminApplications() {
     if (!window.confirm(`Reject ${app.full_name}? Their documents will be deleted and they will be emailed.`)) return;
     setBusyId(app.id);
     try {
-      const res = await api.put(`/admin/applications/${app.id}/reject`, {
-        note: notes[app.id] || ''
-      });
+      const res = await api.put(
+        `/admin/applications/${app.id}/reject`,
+        { note: notes[app.id] || '' },
+        SLOW_REQUEST
+      );
       setMessage(app.id, res.data.message, 'success');
-      await loadApplications();
     } catch (err) {
       setMessage(app.id, err.response?.data?.error || 'Something went wrong', 'error');
     } finally {
+      await loadApplications();
       setBusyId(null);
     }
   };
@@ -145,7 +151,7 @@ function AdminApplications() {
                   disabled={busyId === app.id}
                   onClick={() => approve(app)}
                 >
-                  Approve
+                  {busyId === app.id ? 'Working...' : 'Approve'}
                 </button>
                 <button
                   type="button"
@@ -153,7 +159,7 @@ function AdminApplications() {
                   disabled={busyId === app.id}
                   onClick={() => reject(app)}
                 >
-                  Reject
+                  {busyId === app.id ? 'Working...' : 'Reject'}
                 </button>
               </div>
             )}
