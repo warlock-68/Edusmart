@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import api from '../api';
+import { Link } from 'react-router-dom';
 
 function Register() {
-  const [form, setForm] = useState({ name: '', email: '', password: '', role: 'teacher' });
+  const [form, setForm] = useState({ name: '', email: '', password: '', role: 'student' });
   const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
@@ -20,7 +21,7 @@ function Register() {
     }
   };
 
-    return (
+  return (
     <div className="page-shell">
       <div className="panel">
         <h2 className="text-2xl mb-6">Register for EduSmart</h2>
@@ -36,14 +37,14 @@ function Register() {
 
           <label className="field-label">Email</label>
           <input
-  name="email"
-  type="email"
-  autoComplete="off"
-  value={form.email}
-  onChange={handleChange}
-  required
-  className="field-input"
-/>
+            name="email"
+            type="email"
+            autoComplete="off"
+            value={form.email}
+            onChange={handleChange}
+            required
+            className="field-input"
+          />
 
           <label className="field-label">Password</label>
           <input
@@ -55,21 +56,15 @@ function Register() {
             className="field-input"
           />
 
-          <label className="field-label">Role</label>
-          <select
-            name="role"
-            value={form.role}
-            onChange={handleChange}
-            className="field-input"
-          >
-            <option value="student">Student</option>
-            <option value="teacher">Teacher</option>
-            <option value="tutor">Tutor</option>
-          </select>
-
           <button type="submit" className="btn-primary">Register</button>
         </form>
         {message && <p className="mt-4">{message}</p>}
+        <p className="mt-4">
+          Are you a qualified teacher or tutor?{' '}
+          <Link to="/become-tutor" className="underline text-[var(--color-bunsen)]">
+            Apply to become a tutor
+          </Link>.
+        </p>
       </div>
     </div>
   );
