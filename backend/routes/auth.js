@@ -12,7 +12,7 @@ const router = express.Router();
 // If you add a real "admin" onboarding flow later, keep admin OUT of this
 // list and create admin accounts a different way (e.g. directly in the DB
 // or via a separate protected endpoint) rather than letting anyone self-register as one.
-const ALLOWED_SELF_REGISTER_ROLES = ['student', 'teacher', 'tutor'];
+const ALLOWED_SELF_REGISTER_ROLES = ['student'];
 
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
