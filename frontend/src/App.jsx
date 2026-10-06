@@ -50,6 +50,7 @@ function App() {
         <div className={`${menuOpen ? 'flex' : 'hidden'} flex-col gap-2 w-full md:flex md:flex-row md:gap-6 md:w-auto`}>
           <NavLink onClick={closeMenu} to="/register" className={({isActive}) => isActive ? "active" : ""}>Register</NavLink>
           <NavLink onClick={closeMenu} to="/login" className={({isActive}) => isActive ? "active" : ""}>Login</NavLink>
+          <NavLink onClick={closeMenu} to="/become-tutor" className={({isActive}) => isActive ? "active" : ""}>Become a Tutor</NavLink>
           <NavLink onClick={closeMenu} to="/upload" className={({isActive}) => isActive ? "active" : ""}>Upload</NavLink>
           <NavLink onClick={closeMenu} to="/content" className={({isActive}) => isActive ? "active" : ""}>Content</NavLink>
           <NavLink onClick={closeMenu} to="/ask" className={({isActive}) => isActive ? "active" : ""}>Ask a Question</NavLink>
