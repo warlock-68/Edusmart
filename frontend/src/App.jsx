@@ -14,10 +14,34 @@ import MyBookings from './pages/MyBookings';
 import BecomeTutor from './pages/BecomeTutor';
 import AdminApplications from './pages/AdminApplications';
 
+// Read the logged-in user saved by the Login page (null if nobody is logged in)
+function getStoredUser() {
+  try {
+    return JSON.parse(localStorage.getItem('user') || 'null');
+  } catch (err) {
+    return null;
+  }
+}
+
 function App() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const closeMenu = () => setMenuOpen(false);
+
+  const user = getStoredUser();
+  const role = user?.role || null;
+
+  const isStudent = role === 'student';
+  const isTutor = role === 'tutor';
+  const isAdmin = role === 'admin';
+
+  const logout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+  };
+
+  const linkClass = ({ isActive }) => (isActive ? 'active' : '');
 
   return (
     <BrowserRouter>
@@ -47,18 +71,66 @@ function App() {
         </div>
 
         <div className={`${menuOpen ? 'flex' : 'hidden'} flex-col gap-2 w-full md:flex md:flex-row md:gap-6 md:w-auto`}>
-          <NavLink onClick={closeMenu} to="/register" className={({isActive}) => isActive ? "active" : ""}>Register</NavLink>
-          <NavLink onClick={closeMenu} to="/login" className={({isActive}) => isActive ? "active" : ""}>Login</NavLink>
-          <NavLink onClick={closeMenu} to="/become-tutor" className={({isActive}) => isActive ? "active" : ""}>Become a Tutor</NavLink>
-          <NavLink onClick={closeMenu} to="/upload" className={({isActive}) => isActive ? "active" : ""}>Upload</NavLink>
-          <NavLink onClick={closeMenu} to="/content" className={({isActive}) => isActive ? "active" : ""}>Content</NavLink>
-          <NavLink onClick={closeMenu} to="/ask" className={({isActive}) => isActive ? "active" : ""}>Ask a Question</NavLink>
-          <NavLink onClick={closeMenu} to="/quiz" className={({isActive}) => isActive ? "active" : ""}>Quiz</NavLink>
-          <NavLink onClick={closeMenu} to="/dashboard" className={({isActive}) => isActive ? "active" : ""}>Dashboard</NavLink>
-          <NavLink onClick={closeMenu} to="/progress" className={({isActive}) => isActive ? "active" : ""}>My Progress</NavLink>
-          <NavLink onClick={closeMenu} to="/tutors" className={({isActive}) => isActive ? "active" : ""}>Find a Tutor</NavLink>
-          <NavLink onClick={closeMenu} to="/bookings" className={({isActive}) => isActive ? "active" : ""}>My Bookings</NavLink>
-          <NavLink onClick={closeMenu} to="/admin/applications" className={({isActive}) => isActive ? "active" : ""}>Applications</NavLink>
+          {/* Visitors who are not logged in */}
+          {!role && (
+            <>
+              <NavLink onClick={closeMenu} to="/register" className={linkClass}>Register</NavLink>
+              <NavLink onClick={closeMenu} to="/login" className={linkClass}>Login</NavLink>
+              <NavLink onClick={closeMenu} to="/become-tutor" className={linkClass}>Become a Tutor</NavLink>
+            </>
+          )}
+
+          {/* Tutors and admins */}
+          {(isTutor || isAdmin) && (
+            <NavLink onClick={closeMenu} to="/upload" className={linkClass}>Upload</NavLink>
+          )}
+
+          {/* Everyone who is logged in */}
+          {role && (
+            <NavLink onClick={closeMenu} to="/content" className={linkClass}>Content</NavLink>
+          )}
+
+          {/* Students and admins */}
+          {(isStudent || isAdmin) && (
+            <>
+              <NavLink onClick={closeMenu} to="/ask" className={linkClass}>Ask a Question</NavLink>
+              <NavLink onClick={closeMenu} to="/quiz" className={linkClass}>Quiz</NavLink>
+            </>
+          )}
+
+          {/* Tutors and admins */}
+          {(isTutor || isAdmin) && (
+            <NavLink onClick={closeMenu} to="/dashboard" className={linkClass}>Dashboard</NavLink>
+          )}
+
+          {/* Students and admins */}
+          {(isStudent || isAdmin) && (
+            <>
+              <NavLink onClick={closeMenu} to="/progress" className={linkClass}>My Progress</NavLink>
+              <NavLink onClick={closeMenu} to="/tutors" className={linkClass}>Find a Tutor</NavLink>
+            </>
+          )}
+
+          {/* Everyone who is logged in */}
+          {role && (
+            <NavLink onClick={closeMenu} to="/bookings" className={linkClass}>My Bookings</NavLink>
+          )}
+
+          {/* Admin only */}
+          {isAdmin && (
+            <NavLink onClick={closeMenu} to="/admin/applications" className={linkClass}>Applications</NavLink>
+          )}
+
+          {/* Logout, only when logged in */}
+          {role && (
+            <button
+              type="button"
+              onClick={logout}
+              className="text-left md:text-center cursor-pointer text-[var(--color-ink)]"
+            >
+              Logout ({user.name})
+            </button>
+          )}
         </div>
       </nav>
       <Routes>
