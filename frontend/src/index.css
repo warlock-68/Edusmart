@@ -1,5 +1,5 @@
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+@import "tailwindcss";
 
 @theme {
   --color-chalk: #F4F6F2;
@@ -81,4 +81,48 @@ h1, h2, h3 {
   .data-table td {
     @apply border-b border-[var(--color-line)] py-2 px-3;
   }
+}
+body {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
+    url('/images/lab1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  font-weight: 500;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+}
+/* A different background photo for some pages */
+body[data-page="/quiz"] {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
+    url('/images/pawan-parihar-Q7ngZ0oKIfc-unsplash.jpg');
+}
+
+body[data-page="/progress"] {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
+    url('/images/pexels-artempodrez-8532863.jpg');
+}
+
+body[data-page="/tutors"],
+body[data-page="/bookings"] {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
+    url('/images/pexels-karola-g-5311406.jpg');
+}
+
+body[data-page="/become-tutor"] {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
+    url('/images/pexels-katerina-holmes-5905486.jpg');
+}
+
+body[data-page="/register"] {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
+    url('/images/pexels-clint-studios-2153358559-35129514.jpg');
 }

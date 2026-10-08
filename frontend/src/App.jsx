@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { BrowserRouter, Routes, Route, NavLink } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, NavLink, useLocation } from 'react-router-dom';
+import Home from './pages/Home';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
@@ -24,6 +25,15 @@ function getStoredUser() {
 }
 
 function App() {
+
+  // Tells the page which route we are on, so index.css can pick a background photo
+function PageBackground() {
+  const location = useLocation();
+  useEffect(() => {
+    document.body.setAttribute('data-page', location.pathname);
+  }, [location.pathname]);
+  return null;
+}
   const [menuOpen, setMenuOpen] = useState(false);
 
   const closeMenu = () => setMenuOpen(false);
@@ -45,6 +55,7 @@ function App() {
 
   return (
     <BrowserRouter>
+          <PageBackground />
       <nav className="navbar">
         <div className="flex items-center justify-between w-full md:w-auto">
           <span className="font-serif text-lg font-semibold text-[var(--color-ink)] flex items-center gap-2">
@@ -71,6 +82,9 @@ function App() {
         </div>
 
         <div className={`${menuOpen ? 'flex' : 'hidden'} flex-col gap-2 w-full md:flex md:flex-row md:gap-6 md:w-auto`}>
+          {/* Everyone */}
+          <NavLink onClick={closeMenu} to="/" end className={linkClass}>Home</NavLink>
+
           {/* Visitors who are not logged in */}
           {!role && (
             <>
@@ -134,6 +148,7 @@ function App() {
         </div>
       </nav>
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -147,7 +162,6 @@ function App() {
         <Route path="/tutors" element={<Tutors />} />
         <Route path="/bookings" element={<MyBookings />} />
         <Route path="/admin/applications" element={<AdminApplications />} />
-        <Route path="/" element={<h2 style={{ textAlign: 'center' }}>Welcome to EduSmart</h2>} />
       </Routes>
     </BrowserRouter>
   );
