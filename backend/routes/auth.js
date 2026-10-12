@@ -15,9 +15,9 @@ const router = express.Router();
 const ALLOWED_SELF_REGISTER_ROLES = ['student'];
 
 const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 2 * 60 * 1000, // 2 minutes
   max: 5, // 5 attempts per IP per window
-  message: { error: 'Too many login attempts. Please try again in 15 minutes.' },
+  message: { error: 'Too many login attempts. Please try again in 2 minutes.' },
   standardHeaders: true,
   legacyHeaders: false,
 });
