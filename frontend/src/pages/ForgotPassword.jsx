@@ -18,7 +18,7 @@ function ForgotPassword() {
     setMessage('');
     setLoading(true);
     try {
-      const res = await api.post('/auth/forgot-password', { email });
+      const res = await api.post('/auth/forgot-password', { email }, { timeout: 60000 });
       setMessage(res.data.message);
       setStep('reset');
     } catch (err) {
