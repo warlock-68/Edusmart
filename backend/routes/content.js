@@ -37,6 +37,7 @@ const upload = multer({
 });
 
 // POST /api/content/upload
+// Admin uploads appear on the Content page; tutor uploads appear on that tutor's profile
 router.post('/upload', verifyToken, requireRole('tutor', 'admin'), upload.single('file'), async (req, res) => {
   try {
     if (!req.file) {
@@ -96,7 +97,7 @@ router.use((err, req, res, next) => {
   next();
 });
 
-// GET /api/content - list all content, optionally filtered by topic
+// GET /api/content - the official Content page: ADMIN uploads only, optionally filtered by topic
 router.get('/', verifyToken, async (req, res) => {
   try {
     const { topic_id } = req.query;
@@ -106,18 +107,38 @@ router.get('/', verifyToken, async (req, res) => {
              users.name AS uploaded_by
       FROM content
       LEFT JOIN curriculum_topics ON content.topic_id = curriculum_topics.id
-      LEFT JOIN users ON content.uploader_id = users.id
+      INNER JOIN users ON content.uploader_id = users.id
+      WHERE users.role = 'admin'
     `;
     const params = [];
 
     if (topic_id) {
-      query += ' WHERE content.topic_id = ?';
+      query += ' AND content.topic_id = ?';
       params.push(topic_id);
     }
 
     query += ' ORDER BY content.created_at DESC';
 
     const [rows] = await pool.query(query, params);
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// GET /api/content/tutor/:tutorId - everything one tutor has uploaded (for their profile)
+router.get('/tutor/:tutorId', verifyToken, async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      `SELECT content.id, content.title, content.file_type, content.created_at,
+              curriculum_topics.topic, curriculum_topics.grade
+       FROM content
+       LEFT JOIN curriculum_topics ON content.topic_id = curriculum_topics.id
+       WHERE content.uploader_id = ?
+       ORDER BY content.created_at DESC`,
+      [req.params.tutorId]
+    );
     res.json(rows);
   } catch (err) {
     console.error(err);
@@ -143,7 +164,7 @@ router.get('/:id/download', verifyToken, async (req, res) => {
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Content not found' });
     }
-        await pool.query(
+    await pool.query(
       'INSERT INTO usage_logs (user_id, content_id, topic_id, action_type) VALUES (?, ?, ?, ?)',
       [req.user.id, rows[0].id, rows[0].topic_id, 'download']
     );
@@ -156,5 +177,58 @@ router.get('/:id/download', verifyToken, async (req, res) => {
   }
 });
 
+// GET /api/content/notes - every topic, with a flag showing whether it has notes yet
+router.get('/notes', verifyToken, async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      `SELECT t.id, t.grade, t.topic, (n.id IS NOT NULL) AS has_notes
+       FROM curriculum_topics t
+       LEFT JOIN topic_notes n ON n.topic_id = t.id
+       ORDER BY t.grade, t.topic`
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 
+// GET /api/content/notes/:topicId - the notes for one topic
+router.get('/notes/:topicId', verifyToken, async (req, res) => {
+  try {
+    const [rows] = await pool.query(
+      `SELECT t.id, t.grade, t.topic, n.body, n.updated_at
+       FROM curriculum_topics t
+       LEFT JOIN topic_notes n ON n.topic_id = t.id
+       WHERE t.id = ?`,
+      [req.params.topicId]
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'Topic not found' });
+    }
+    res.json(rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// PUT /api/content/notes/:topicId - ADMIN ONLY: create or update the notes for a topic
+router.put('/notes/:topicId', verifyToken, requireRole('admin'), async (req, res) => {
+  try {
+    const { body } = req.body;
+    if (!body || !body.trim()) {
+      return res.status(400).json({ error: 'Notes cannot be empty' });
+    }
+    await pool.query(
+      `INSERT INTO topic_notes (topic_id, body, updated_by) VALUES (?, ?, ?)
+       ON DUPLICATE KEY UPDATE body = VALUES(body), updated_by = VALUES(updated_by)`,
+      [req.params.topicId, body, req.user.id]
+    );
+    res.json({ message: 'Notes saved' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
 module.exports = router;
