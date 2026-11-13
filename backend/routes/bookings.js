@@ -22,7 +22,7 @@ router.post('/', verifyToken, requireRole('student'), async (req, res) => {
   }
 
   try {
-    const [[tutor]] = await pool.query('SELECT id FROM users WHERE id = ? AND role = "tutor"', [tutor_id]);
+const [[tutor]] = await pool.query("SELECT id FROM users WHERE id = ? AND role = 'tutor'", [tutor_id]);
     if (!tutor) {
       return res.status(400).json({ error: 'Selected tutor does not exist' });
     }
@@ -135,9 +135,9 @@ router.put('/:id/respond', verifyToken, requireRole('tutor'), async (req, res) =
       if (conflict) {
         return res.status(409).json({ error: 'You already have an accepted session that overlaps with this time. Decline or suggest a different time for this request instead.' });
       }
-      await pool.query('UPDATE bookings SET status = "accepted" WHERE id = ?', [booking.id]);
+      await pool.query('UPDATE bookings SET status = \'accepted\' WHERE id = ?', [booking.id]);
     } else if (action === 'decline')  {
-      await pool.query('UPDATE bookings SET status = "declined" WHERE id = ?', [booking.id]);
+      await pool.query('UPDATE bookings SET status = \'declined\' WHERE id = ?', [booking.id]);
     } else {
       await pool.query('UPDATE bookings SET suggested_time = ? WHERE id = ?', [suggested_time, booking.id]);
     }
@@ -170,11 +170,11 @@ router.put('/:id/respond-suggestion', verifyToken, requireRole('student'), async
 
     if (accept) {
       await pool.query(
-        'UPDATE bookings SET requested_time = suggested_time, suggested_time = NULL, status = "accepted" WHERE id = ?',
+        'UPDATE bookings SET requested_time = suggested_time, suggested_time = NULL, status = \'accepted\' WHERE id = ?',
         [booking.id]
       );
     } else {
-      await pool.query('UPDATE bookings SET status = "declined" WHERE id = ?', [booking.id]);
+      await pool.query('UPDATE bookings SET status = \'declined\' WHERE id = ?', [booking.id]);
     }
 
     res.json({ message: 'Response recorded' });
@@ -224,7 +224,7 @@ router.put('/:id/cancel', verifyToken, requireRole('student', 'tutor'), async (r
       return res.status(400).json({ error: 'This session has already taken place and cannot be cancelled' });
     }
 
-    await pool.query('UPDATE bookings SET status = "cancelled" WHERE id = ?', [booking.id]);
+    await pool.query('UPDATE bookings SET status = \'cancelled\' WHERE id = ?', [booking.id]);
     res.json({ message: 'Booking cancelled' });
   } catch (err) {
     console.error('Error cancelling booking:', err);
