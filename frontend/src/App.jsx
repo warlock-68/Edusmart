@@ -14,6 +14,8 @@ import Tutors from './pages/Tutors';
 import MyBookings from './pages/MyBookings';
 import BecomeTutor from './pages/BecomeTutor';
 import AdminApplications from './pages/AdminApplications';
+import MyProfile from './pages/MyProfile';
+import TutorProfile from './pages/TutorProfile';
 
 // Read the logged-in user saved by the Login page (null if nobody is logged in)
 function getStoredUser() {
@@ -130,6 +132,11 @@ function PageBackground() {
             <NavLink onClick={closeMenu} to="/bookings" className={linkClass}>My Bookings</NavLink>
           )}
 
+          {/* Everyone who is logged in */}
+          {role && (
+            <NavLink onClick={closeMenu} to="/profile" className={linkClass}>My Profile</NavLink>
+          )}
+
           {/* Admin only */}
           {isAdmin && (
             <NavLink onClick={closeMenu} to="/admin/applications" className={linkClass}>Applications</NavLink>
@@ -160,7 +167,9 @@ function PageBackground() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/progress" element={<MyProgress />} />
         <Route path="/tutors" element={<Tutors />} />
+        <Route path="/tutors/:id" element={<TutorProfile />} />
         <Route path="/bookings" element={<MyBookings />} />
+        <Route path="/profile" element={<MyProfile />} />
         <Route path="/admin/applications" element={<AdminApplications />} />
       </Routes>
     </BrowserRouter>

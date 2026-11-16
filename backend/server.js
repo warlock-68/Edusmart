@@ -10,6 +10,7 @@ const tutorRoutes = require('./routes/tutors');
 const bookingRoutes = require('./routes/bookings');
 const applicationRoutes = require('./routes/applications');
 const adminApplicationRoutes = require('./routes/adminApplications');
+const profileRoutes = require('./routes/profile');
 
 
 const app = express();
@@ -30,6 +31,7 @@ app.use('/api/tutors', tutorRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/admin/applications', adminApplicationRoutes);
+app.use('/api/profile', profileRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

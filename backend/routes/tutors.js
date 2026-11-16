@@ -10,6 +10,8 @@ router.get('/', verifyToken, async (req, res) => {
   try {
     const [tutors] = await pool.query(
       `SELECT u.id, u.name, u.availability_note,
+              (SELECT headline FROM user_profiles WHERE user_id = u.id) AS headline,
+              (SELECT COUNT(*) FROM user_photos WHERE user_id = u.id) AS has_photo,
               ROUND(AVG(r.rating), 1) AS avg_rating,
               COUNT(DISTINCT r.id) AS rating_count
        FROM users u
