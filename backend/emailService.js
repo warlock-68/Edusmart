@@ -101,8 +101,26 @@ async function sendApplicationRejectedEmail(toEmail, fullName, adminNote) {
   });
 }
 
+
+async function sendVerificationEmail(toEmail, name, code) {
+  await sendEmail({
+    to: toEmail,
+    subject: 'Verify your EduSmart account',
+    text: `Hello ${name},\n\nWelcome to EduSmart! Your verification code is: ${code}\n\nThis code expires in 15 minutes. If you did not create this account, you can safely ignore this email.\n\nThe EduSmart Team`,
+    html: `
+      <p>Hello ${escapeHtml(name)},</p>
+      <p>Welcome to EduSmart! Your verification code is:</p>
+      <h2 style="letter-spacing: 4px;">${code}</h2>
+      <p>This code expires in <strong>15 minutes</strong>.</p>
+      <p>If you did not create this account, you can safely ignore this email.</p>
+      <p>The EduSmart Team</p>
+    `
+  });
+}
+
 module.exports = {
   sendPasswordResetEmail,
   sendApplicationApprovedEmail,
-  sendApplicationRejectedEmail
+  sendApplicationRejectedEmail,
+  sendVerificationEmail
 };
