@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import ForgotPassword from './pages/ForgotPassword';
+import VerifyEmail from './pages/VerifyEmail';
 import Upload from './pages/Upload';
 import ContentList from './pages/ContentList';
 import AskQuestion from './pages/AskQuestion';
@@ -159,6 +160,7 @@ function PageBackground() {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/become-tutor" element={<BecomeTutor />} />
         <Route path="/upload" element={<Upload />} />
         <Route path="/content" element={<ContentList />} />

@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import api from '../api';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Register() {
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'student' });
   const [message, setMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -13,11 +15,14 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
+    setLoading(true);
     try {
-      const res = await api.post('/auth/register', form);
-      setMessage('Registered successfully! You can now log in.');
+      const res = await api.post('/auth/register', form, { timeout: 60000 });
+      navigate(`/verify-email?email=${encodeURIComponent(res.data.email)}`);
     } catch (err) {
       setMessage(err.response?.data?.error || 'Something went wrong');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,7 +61,9 @@ function Register() {
             className="field-input"
           />
 
-          <button type="submit" className="btn-primary">Register</button>
+          <button type="submit" className="btn-primary" disabled={loading}>
+            {loading ? 'Please wait...' : 'Register'}
+          </button>
         </form>
         {message && <p className="mt-4">{message}</p>}
         <p className="mt-4">
