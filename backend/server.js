@@ -11,6 +11,7 @@ const bookingRoutes = require('./routes/bookings');
 const applicationRoutes = require('./routes/applications');
 const adminApplicationRoutes = require('./routes/adminApplications');
 const profileRoutes = require('./routes/profile');
+const chatRoutes = require('./routes/chat');
 const addVerificationColumns = require('./addVerification');
 
 
@@ -33,6 +34,7 @@ app.use('/api/bookings', bookingRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/admin/applications', adminApplicationRoutes);
 app.use('/api/profile', profileRoutes);
+app.use('/api/chat', chatRoutes);
 
 addVerificationColumns();
 const PORT = process.env.PORT || 5000;

@@ -17,6 +17,7 @@ import BecomeTutor from './pages/BecomeTutor';
 import AdminApplications from './pages/AdminApplications';
 import MyProfile from './pages/MyProfile';
 import TutorProfile from './pages/TutorProfile';
+import ChatBot from './pages/ChatBot';
 
 // Read the logged-in user saved by the Login page (null if nobody is logged in)
 function getStoredUser() {
@@ -173,7 +174,8 @@ function PageBackground() {
         <Route path="/bookings" element={<MyBookings />} />
         <Route path="/profile" element={<MyProfile />} />
         <Route path="/admin/applications" element={<AdminApplications />} />
-      </Routes>
+        </Routes>
+      <ChatBot />
     </BrowserRouter>
   );
 }
